@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create Patient</title>
+</head>
+<body>
+    <h1>Create a New Patient</h1>
+    <form id="patientForm">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required><br><br>
+        
+        <label for="age">Age:</label>
+        <input type="number" id="age" name="age" required><br><br>
+        
+        <label for="deviceSerial">unique identifier:</label>
+        <input type="text" id="deviceSerial" name="deviceSerial" required><br><br>
+
+        <label for="createdDttm">Created Date and Time:</label>
+        <input type="datetime-local" id="createdDttm" name="createdDttm" required><br><br>
+
+        <label for="isActive">Is Active:</label>
+        <input type="checkbox" id="isActive" name="isActive">
+
+
+        <button type="submit">Create Patient</button>
+    </form>
+
+    <script>
+        document.getElementById('patientForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            const name = document.getElementById('name').value;
+            const age = document.getElementById('age').value;
+            const deviceSerial = document.getElementById('deviceSerial').value;
+            const createdDttm = document.getElementById('createdDttm').value;
+            const isActive = document.getElementById('isActive').checked;
+    
+            // Send the patient data to your API endpoint using fetch or XMLHttpRequest
+            fetch('/api/create-patient', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ name, age, deviceSerial, createdDttm, isActive })
+            })
+            .then(response => {
+                if (response.status === 201) {
+                    alert('Patient created successfully');
+                    // Optionally, you can reset the form here
+                } else {
+                    alert('Failed to create patient');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+    </script>
+    
+</body>
+</html>

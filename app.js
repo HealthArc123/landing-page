@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const mysql = require('mysql');
+const path = require('path'); // Add the 'path' module
 
 const app = express();
 const port = 3000;
@@ -21,6 +22,26 @@ db.connect((err) => {
     console.log('Connected to MySQL database');
   }
 });
+
+// Endpoint for creating a patient
+app.post('/api/create-patient', (req, res) => {
+  const { name, age, deviceSerial, createdDttm, isActive } = req.body;
+
+  // Insert the patient data into the patients table and handle errors
+  db.query('INSERT INTO patients (name, age, unique_identifier, created_dttm, is_active) VALUES (?, ?, ?, ?, ?)',
+      [name, age, deviceSerial, createdDttm, isActive],
+      (err, results) => {
+          if (err) {
+              console.error('Error creating a patient:', err);
+              res.status(500).send('Failed to create patient');
+          } else {
+              console.log('Patient created successfully');
+              res.status(201).send('Patient created');
+          }
+      }
+  );
+});
+
 
 // API endpoint to receive device data
 app.post('/api/receive-data', (req, res) => {
@@ -81,6 +102,8 @@ app.get('/patient/device/:patient_device_id/reading/avg', (req, res) => {
   });
 });
 
+// Serve static files (e.g., HTML, CSS, JavaScript)
+app.use(express.static(path.join(__dirname, 'public'))); 
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
